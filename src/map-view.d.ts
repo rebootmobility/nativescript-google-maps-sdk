@@ -155,6 +155,7 @@ export class Bounds {
     public southwest: Position;
     public ios: any; /* GMSCoordinateBounds */
     public android: any;
+    public includingCoordinates(coordinates: Position): Bounds;
     public static fromCoordinates(southwest: Position, northeast: Position): Bounds;
 }
 

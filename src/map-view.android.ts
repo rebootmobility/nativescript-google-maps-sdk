@@ -715,6 +715,10 @@ export class Bounds extends BoundsBase {
         this._android = android;
     }
 
+    public includingCoordinates(coordinates: Position): Bounds {
+        return new Bounds(this._android.including(coordinates.android));
+    }
+
     public static fromCoordinates(southwest: Position, northeast: Position): Bounds {
         return new Bounds(new com.google.android.gms.maps.model.LatLngBounds(southwest.android, northeast.android));
     }

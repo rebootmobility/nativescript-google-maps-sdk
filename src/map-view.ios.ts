@@ -631,6 +631,10 @@ export class Bounds extends BoundsBase {
         this._ios = ios;
     }
 
+    public includingCoordinates(coordinates: Position): Bounds {
+        return new Bounds(this._ios.includingCoordinate(coordinates.ios));
+    }
+
     public static fromCoordinates(southwest: Position, northeast: Position): Bounds {
         return new Bounds(GMSCoordinateBounds.alloc().initWithCoordinateCoordinate(southwest.ios, northeast.ios));
     }
