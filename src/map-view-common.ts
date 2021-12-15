@@ -444,11 +444,12 @@ export class PositionBase implements Position {
     public android: any;
 }
 
-export class BoundsBase implements Bounds {
+export abstract class BoundsBase implements Bounds {
     public northeast: Position;
     public southwest: Position;
     public ios: any; /* GMSCoordinateBounds */
     public android: any;
+    public abstract includingCoordinates(coordinates: Position): Bounds;
 }
 
 export abstract class MarkerBase implements Marker {
