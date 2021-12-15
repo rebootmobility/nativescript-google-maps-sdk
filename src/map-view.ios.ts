@@ -216,9 +216,10 @@ class MapViewDelegateImpl extends NSObject implements GMSMapViewDelegate {
         const owner = this._owner.get();
         if (owner) {
             owner.notifyMyLocationTapped();
-            return true;
+            // Should return false in order to center the map on user position
+            return false;
         }
-        return false;
+        return true;
     }
 
     public mapViewMarkerInfoWindow(mapView: GMSMapView, gmsMarker: GMSMarker): UIView {
@@ -281,7 +282,7 @@ export class MapView extends MapViewBase {
     protected _markers: Array<Marker> = new Array<Marker>();
 
     private _delegate: MapViewDelegateImpl;
-    private _indoorDelegate:IndoorDisplayDelegateImpl;
+    private _indoorDelegate: IndoorDisplayDelegateImpl;
 
     constructor() {
         super();
@@ -308,7 +309,7 @@ export class MapView extends MapViewBase {
     public disposeNativeView() {
         this._markers = null;
         this._delegate = null;
-        this._indoorDelegate=null;
+        this._indoorDelegate = null;
         super.disposeNativeView();
         GC();
     };
@@ -382,7 +383,7 @@ export class MapView extends MapViewBase {
     }
 
     addMarker(...markers: Marker[]) {
-        if(!markers || !this._markers || !this.gMap) return null;
+        if (!markers || !this._markers || !this.gMap) return null;
         markers.forEach(marker => {
             marker.ios.map = this.gMap;
             this._markers.push(marker);
@@ -390,7 +391,7 @@ export class MapView extends MapViewBase {
     }
 
     removeMarker(...markers: Marker[]) {
-        if(!markers || !this._markers || !this.gMap) return null;
+        if (!markers || !this._markers || !this.gMap) return null;
         markers.forEach(marker => {
             this._unloadInfoWindowContent(marker);
             marker.ios.map = null;
@@ -399,7 +400,7 @@ export class MapView extends MapViewBase {
     }
 
     removeAllMarkers() {
-        if(!this._markers) return null;
+        if (!this._markers) return null;
         this._markers.forEach(marker => {
             this._unloadInfoWindowContent(marker);
             marker.ios.map = null;
@@ -408,37 +409,37 @@ export class MapView extends MapViewBase {
     }
 
     findMarker(callback: (marker: Marker) => boolean): Marker {
-        if(!this._markers) return null;
+        if (!this._markers) return null;
         return this._markers.find(callback);
     }
 
     addPolyline(shape: Polyline) {
-        if(!this._shapes) return null;
+        if (!this._shapes) return null;
         shape.loadPoints();
         shape.ios.map = this.gMap;
         this._shapes.push(shape);
     }
 
     addPolygon(shape: Polygon) {
-        if(!this._shapes) return null;
+        if (!this._shapes) return null;
         shape.ios.map = this.gMap;
         this._shapes.push(shape);
     }
 
     addCircle(shape: Circle) {
-        if(!this._shapes) return null;
+        if (!this._shapes) return null;
         shape.ios.map = this.gMap;
         this._shapes.push(shape);
     }
 
     removeShape(shape: ShapeBase) {
-        if(!this._shapes) return null;
+        if (!this._shapes) return null;
         shape.ios.map = null;
         this._shapes.splice(this._shapes.indexOf(shape), 1);
     }
 
     removeAllShapes() {
-        if(!this._shapes) return null;
+        if (!this._shapes) return null;
         this._shapes.forEach(shape => {
             shape.ios.map = null;
         });
@@ -446,7 +447,7 @@ export class MapView extends MapViewBase {
     }
 
     findShape(callback: (shape: ShapeBase) => boolean): ShapeBase {
-        if(!this._shapes) return null;
+        if (!this._shapes) return null;
         return this._shapes.find(callback);
     }
 
