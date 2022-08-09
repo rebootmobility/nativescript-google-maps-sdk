@@ -632,6 +632,11 @@ export class Bounds extends BoundsBase {
     }
 
     public includingCoordinates(coordinates: Position): Bounds {
+
+        if (!this._ios) {
+            return Bounds.fromCoordinates(coordinates.ios, coordinates.ios);
+        }
+
         return new Bounds(this._ios.includingCoordinate(coordinates.ios));
     }
 

@@ -11,7 +11,7 @@ import { Image } from "tns-core-modules/ui/image";
 import { Color } from "tns-core-modules/color";
 import { Point } from "tns-core-modules/ui/core/view";
 import imageSource = require("tns-core-modules/image-source");
-import {IndoorLevel} from "./map-view";
+import { IndoorLevel } from "./map-view";
 
 export * from "./map-view-common";
 
@@ -43,10 +43,10 @@ export class MapView extends MapViewBase {
     }
 
     public disposeNativeView() {
-        if(this.nativeView){
+        if (this.nativeView) {
             this.nativeView.onDestroy();
         }
-        if(this._gMap){
+        if (this._gMap) {
             this._gMap.setMyLocationEnabled(false);
             this._gMap.clear();
         }
@@ -69,7 +69,15 @@ export class MapView extends MapViewBase {
 
     private onActivitySaveInstanceState(args) {
         if (!this.nativeView || this._context != args.activity) return;
-        this.nativeView.onSaveInstanceState(args.bundle);
+        // this.nativeView.onSaveInstanceState(args.bundle); 
+
+        this.nativeView.setSaveFromParentEnabled(true);
+        var mapState = new android.os.Bundle();
+        this.nativeView.onSaveInstanceState(mapState);
+        // Put the map bundle in the main outState
+        args.bundle.putBundle("mapData" + this._domId, mapState);
+        this.nativeView.setSaveFromParentEnabled(false);
+
     }
 
     private onActivityDestroyed(args) {
@@ -85,6 +93,9 @@ export class MapView extends MapViewBase {
         this.nativeView = new com.google.android.gms.maps.MapView(this._context, options);
         this.nativeView.onCreate(null);
         this.nativeView.onResume();
+
+        // prevent crash with TabView involved
+        this.nativeView.setSaveFromParentEnabled(false);
 
         let that = new WeakRef(this);
         var mapReadyCallback = new com.google.android.gms.maps.OnMapReadyCallback({
@@ -429,7 +440,7 @@ export class MapView extends MapViewBase {
     }
 
     addMarker(...markers: Marker[]) {
-        if(!markers || !this._markers || !this.gMap) return null;
+        if (!markers || !this._markers || !this.gMap) return null;
         markers.forEach(marker => {
             marker.android = this.gMap.addMarker(marker.android);
             this._markers.push(marker);
@@ -437,7 +448,7 @@ export class MapView extends MapViewBase {
     }
 
     removeMarker(...markers: Marker[]) {
-        if(!markers || !this._markers || !this.gMap) return null;
+        if (!markers || !this._markers || !this.gMap) return null;
         markers.forEach(marker => {
             this._unloadInfoWindowContent(marker);
             marker.android.remove();
@@ -446,7 +457,7 @@ export class MapView extends MapViewBase {
     }
 
     removeAllMarkers() {
-        if(!this._markers || !this.gMap || !this._markers.length) return null;
+        if (!this._markers || !this.gMap || !this._markers.length) return null;
         this._markers.forEach(marker => {
             this._unloadInfoWindowContent(marker);
             marker.android.remove();
@@ -455,19 +466,19 @@ export class MapView extends MapViewBase {
     }
 
     findMarker(callback: (marker: Marker) => boolean): Marker {
-        if(!this._markers) return null;
+        if (!this._markers) return null;
         return this._markers.find(callback);
     }
 
     addPolyline(shape: Polyline) {
-        if(!this.gMap) return null;
+        if (!this.gMap) return null;
         shape.loadPoints();
         shape.android = this.gMap.addPolyline(shape.android);
         this._shapes.push(shape);
     }
 
     addPolygon(shape: Polygon) {
-        if(!this.gMap) return null;
+        if (!this.gMap) return null;
         shape.loadPoints();
         shape.loadHoles();
         shape.android = this.gMap.addPolygon(shape.android);
@@ -475,19 +486,19 @@ export class MapView extends MapViewBase {
     }
 
     addCircle(shape: Circle) {
-        if(!this._shapes || !this.gMap) return null;
+        if (!this._shapes || !this.gMap) return null;
         shape.android = this.gMap.addCircle(shape.android);
         this._shapes.push(shape);
     }
 
     removeShape(shape: ShapeBase) {
-        if(!this._shapes) return null;
+        if (!this._shapes) return null;
         shape.android.remove();
         this._shapes.splice(this._shapes.indexOf(shape), 1);
     }
 
     removeAllShapes() {
-        if(!this._shapes) return null;
+        if (!this._shapes) return null;
         this._shapes.forEach(shape => {
             shape.android.remove();
         });
@@ -495,13 +506,13 @@ export class MapView extends MapViewBase {
     }
 
     setStyle(style: StyleBase): boolean {
-        if(!this.gMap) return null;
+        if (!this.gMap) return null;
         let styleOptions = new com.google.android.gms.maps.model.MapStyleOptions(JSON.stringify(style));
         return this.gMap.setMapStyle(styleOptions);
     }
 
     findShape(callback: (shape: ShapeBase) => boolean): ShapeBase {
-        if(!this._shapes) return null;
+        if (!this._shapes) return null;
         return this._shapes.find(callback);
     }
 
@@ -716,6 +727,11 @@ export class Bounds extends BoundsBase {
     }
 
     public includingCoordinates(coordinates: Position): Bounds {
+
+        if (!this._android) {
+            return Bounds.fromCoordinates(coordinates.android, coordinates.android);
+        }
+
         return new Bounds(this._android.including(coordinates.android));
     }
 
