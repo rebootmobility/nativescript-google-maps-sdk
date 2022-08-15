@@ -69,6 +69,8 @@ export class MapView extends View {
 
     public myLocationEnabled: boolean;
 
+    public myLocation: Position;
+
     public setMinZoomMaxZoom(): void;
 
     public addMarker(...markers: Marker[]): void;
@@ -96,6 +98,8 @@ export class MapView extends View {
     public clear(): void;
 
     public setStyle(style: Style): boolean;
+
+    public moveCameraToMyLocation(): void;
 }
 
 export const latitudeProperty: Property<MapView, number>;

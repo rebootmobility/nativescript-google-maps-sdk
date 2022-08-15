@@ -21,7 +21,6 @@
                 "./node_modules/*"
             ]
         },
-        "outDir": "./dist"
     },
     "include": [
         "./"
@@ -31,6 +30,5 @@
         "platforms",
         "demo",
         "ng-demo",
-        "dist"
     ]
 }

@@ -362,8 +362,8 @@ export class MapView extends MapViewBase {
         return (update) ? cpBuilder.build() : null;
     }
 
-    updateCamera() {
-        var cameraPosition = this._createCameraPosition();
+    updateCamera(cameraPosition = null) {
+        cameraPosition = cameraPosition ? cameraPosition : this._createCameraPosition();
         if (!cameraPosition) return;
 
         if (!this.gMap) {
@@ -430,6 +430,16 @@ export class MapView extends MapViewBase {
 
     set myLocationEnabled(value: boolean) {
         if (this._gMap) this._gMap.setMyLocationEnabled(value);
+    }
+
+    get myLocation(): Position {
+        if (this._gMap) {
+            const location = this._gMap.getMyLocation();
+            if (location) {
+                return Position.positionFromLatLng(location.getLatitude(), location.getLongitude());
+            }
+        }
+        return null;
     }
 
     setMinZoomMaxZoom() {
@@ -520,6 +530,25 @@ export class MapView extends MapViewBase {
         this._markers = [];
         this._shapes = [];
         this.gMap.clear();
+    }
+
+    public moveCameraToMyLocation(): void {
+        const cpBuilder = new com.google.android.gms.maps.model.CameraPosition.Builder();
+        const myLocation = this.myLocation;
+        if (myLocation) {
+            cpBuilder.target(new com.google.android.gms.maps.model.LatLng(myLocation.latitude, myLocation.longitude));
+            if (!isNaN(this.bearing)) {
+                cpBuilder.bearing(this.bearing);
+            }
+            if (!isNaN(this.zoom)) {
+                cpBuilder.zoom(this.zoom);
+            }
+            if (!isNaN(this.tilt)) {
+                cpBuilder.tilt(this.tilt);
+            }
+            const camera = cpBuilder.build();
+            this.updateCamera(camera);
+        }
     }
 
 }

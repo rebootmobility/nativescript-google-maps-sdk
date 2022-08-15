@@ -169,6 +169,7 @@ export abstract class MapViewBase extends View implements MapView {
     public projection: Projection;
     public settings: UISettingsBase;
     public myLocationEnabled: boolean;
+    public myLocation: Position;
 
     public static mapReadyEvent: string = "mapReady";
     public static markerSelectEvent: string = "markerSelect";
@@ -239,7 +240,7 @@ export abstract class MapViewBase extends View implements MapView {
     }
 
     public _getInfoWindowTemplate(marker: MarkerBase): KeyedTemplate {
-        if(marker){
+        if (marker) {
             const templateKey = marker.infoWindowTemplate;
             for (let i = 0, length = this._infoWindowTemplates.length; i < length; i++) {
                 if (this._infoWindowTemplates[i].key === templateKey) {
@@ -264,6 +265,8 @@ export abstract class MapViewBase extends View implements MapView {
 
     public abstract setStyle(style: Style): boolean;
 
+    public abstract moveCameraToMyLocation(): void;
+
     public abstract updateCamera(): void;
 
     public abstract setViewport(b: Bounds, p?: number): void;
@@ -283,7 +286,7 @@ export abstract class MapViewBase extends View implements MapView {
     public abstract clear(): void;
 
     public removeAllPolylines() {
-        if(!this._shapes) return null;
+        if (!this._shapes) return null;
         this._shapes.forEach(shape => {
             if (shape.shape === 'polyline') {
                 this.removeShape(shape);
@@ -292,7 +295,7 @@ export abstract class MapViewBase extends View implements MapView {
     }
 
     public removeAllPolygons() {
-        if(!this._shapes) return null;
+        if (!this._shapes) return null;
         this._shapes.forEach(shape => {
             if (shape.shape === 'polygon') {
                 this.removeShape(shape);
@@ -301,7 +304,7 @@ export abstract class MapViewBase extends View implements MapView {
     }
 
     public removeAllCircles() {
-        if(!this._shapes) return null;
+        if (!this._shapes) return null;
         this._shapes.forEach(shape => {
             if (shape.shape === 'circle') {
                 this.removeShape(shape);

@@ -324,11 +324,14 @@ export class MapView extends MapViewBase {
         );
     }
 
-    updateCamera() {
+    updateCamera(cameraPosition: GMSCameraPosition = null) {
+
+        cameraPosition = cameraPosition !== null ? cameraPosition : this._createCameraPosition();
+
         if (this.mapAnimationsEnabled) {
-            this.nativeView.animateToCameraPosition(this._createCameraPosition());
+            this.nativeView.animateToCameraPosition(cameraPosition);
         } else {
-            this.nativeView.camera = this._createCameraPosition();
+            this.nativeView.camera = cameraPosition;
         }
     }
 
@@ -376,6 +379,13 @@ export class MapView extends MapViewBase {
 
     set myLocationEnabled(value: boolean) {
         if (this.nativeView) this.nativeView.myLocationEnabled = value;
+    }
+
+    get myLocation(): Position {
+        if (this.nativeView && (this.nativeView as GMSMapView).myLocation) {
+            return Position.positionFromLatLng(this.nativeView.myLocation.coordinate.latitude, this.nativeView.myLocation.coordinate.longitude)
+        }
+        return null;
     }
 
     setMinZoomMaxZoom() {
@@ -463,6 +473,17 @@ export class MapView extends MapViewBase {
         } catch (err) {
             return false;
         }
+    }
+
+    moveCameraToMyLocation() {
+        const camera = GMSCameraPosition.cameraWithLatitudeLongitudeZoomBearingViewingAngle(
+            this.myLocation.latitude ? this.myLocation.latitude : this.latitude,
+            this.myLocation.longitude ? this.myLocation.longitude : this.longitude,
+            this.zoom,
+            this.bearing,
+            this.tilt
+        );
+        this.updateCamera(camera);
     }
 }
 
