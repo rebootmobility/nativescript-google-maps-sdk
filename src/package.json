@@ -1,6 +1,6 @@
 {
   "name": "@rebootmobility/nativescript-google-maps-sdk",
-  "version": "2.9.9",
+  "version": "2.9.10",
   "description": "Google Maps SDK plugin for Nativescript",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
