@@ -20,7 +20,7 @@
                 "./node_modules/tns-core-modules/*",
                 "./node_modules/*"
             ]
-        }, 
+        },
         "outDir": "./dist"
     },
     "include": [
@@ -30,6 +30,7 @@
         "node_modules",
         "platforms",
         "demo",
-        "ng-demo"
+        "ng-demo",
+        "dist"
     ]
 }
