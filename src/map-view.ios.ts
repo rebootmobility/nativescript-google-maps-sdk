@@ -477,8 +477,8 @@ export class MapView extends MapViewBase {
 
     moveCameraToMyLocation() {
         const camera = GMSCameraPosition.cameraWithLatitudeLongitudeZoomBearingViewingAngle(
-            this.myLocation.latitude ? this.myLocation.latitude : this.latitude,
-            this.myLocation.longitude ? this.myLocation.longitude : this.longitude,
+            this.myLocation && this.myLocation.latitude ? this.myLocation.latitude : this.latitude,
+            this.myLocation && this.myLocation.longitude ? this.myLocation.longitude : this.longitude,
             this.zoom,
             this.bearing,
             this.tilt
